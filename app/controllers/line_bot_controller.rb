@@ -13,9 +13,25 @@ class LineBotController < ApplicationController
       when Line::Bot::Event::Message
         case event.type
         when Line::Bot::Event::MessageType::Text
+          reply_token = event["replyToken"]
+          text = event.message["text"]
+          user_id = event["source"]["userId"]
+
+          response = OpenAI::Client.new.completions(
+            parameters: {
+                model: "text-davinci-003",
+                prompt: text,
+                max_tokens: 50
+            })
+
+          message_text = response["choices"][0]["text"].strip
+
+          # Create a Message record with the user's input and OpenAI's response
+          Message.create(user_id: user_id, user_input: text, ai_response: message_text)
+
           message = {
             type: "text",
-            text: event.message["text"]
+            text: message_text
           }
  
           client.reply_message(event["replyToken"], message)
