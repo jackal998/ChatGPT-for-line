@@ -1,7 +1,7 @@
 class LineMessageSender
-  def initialize(client, replyToken)
+  def initialize(client, reply_token)
     @client = client
-    @replyToken = replyToken
+    @reply_token = reply_token
   end
 
   def send(message_text)
@@ -10,6 +10,6 @@ class LineMessageSender
       text: message_text
     }
 
-    @client.reply_message(@replyToken, message)
+    @client.reply_message(@reply_token, message)
   end
 end
