@@ -19,13 +19,9 @@ class LineMessageParser
           user_id = event["source"]["userId"]
           user_input = event.message["text"]
           reply_token = event["replyToken"]
-        when Line::Bot::Event::MessageType::Image, Line::Bot::Event::MessageType::Video
-          # response = client.get_message_content(event.message['id'])
-          # tf = Tempfile.open("content")
-          # tf.write(response.body)
+
+          return {user_id: user_id, user_input: user_input, reply_token: reply_token}
         end
-        
-        return {user_id: user_id, user_input: user_input, reply_token: reply_token}
       end
     end
 
