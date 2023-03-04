@@ -38,7 +38,7 @@ RSpec.describe OpenaiPromptGenerator, type: :service do
       it "returns a string without recent conversations" do
         is_expected.not_to include("ai_response:")
       end
-      
+
       include_examples "current user input under a fixed lenth limit"
     end
   end
