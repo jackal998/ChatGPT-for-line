@@ -1,15 +1,18 @@
 require "rails_helper"
 
-RSpec.describe LineMessageParser, type: :service do
+RSpec.describe LineMessage::Parser, type: :service do
   describe "#parse" do
-    subject { parser.parse(double("request", body: double("body", read: event), env: {"HTTP_X_LINE_SIGNATURE" => signature})) }
+    subject { parser.parse }
 
     before do
+      allow(parser).to receive(:client).and_return(client)
       allow(client).to receive(:parse_events_from).and_return([Line::Bot::Event::Message.new(event)])
     end
 
+    let(:request) { double("request", body: double("body", read: event), env: {"HTTP_X_LINE_SIGNATURE" => signature}) }
     let(:client) { double("line_client") }
-    let(:parser) { LineMessageParser.new(client) }
+    let(:parser) { described_class.new(request) }
+
     let(:user_id) { "U1234567890abcdef1234567890abcdef" }
     let(:user_input) { "Hello, world!" }
     let(:reply_token) { "R1234567890abcdef1234567890abcdef" }
