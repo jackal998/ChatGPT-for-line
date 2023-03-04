@@ -2,8 +2,8 @@ require "rails_helper"
 
 RSpec.describe LineMessageParser, type: :service do
   describe "#parse" do
-    subject { parser.parse(double("request", body: double("body", read: event), env: { "HTTP_X_LINE_SIGNATURE" => signature })) }
-  
+    subject { parser.parse(double("request", body: double("body", read: event), env: {"HTTP_X_LINE_SIGNATURE" => signature})) }
+
     before do
       allow(client).to receive(:parse_events_from).and_return([Line::Bot::Event::Message.new(event)])
     end
@@ -13,12 +13,12 @@ RSpec.describe LineMessageParser, type: :service do
     let(:user_id) { "U1234567890abcdef1234567890abcdef" }
     let(:user_input) { "Hello, world!" }
     let(:reply_token) { "R1234567890abcdef1234567890abcdef" }
-    let(:message) { { "type" => "text", "text" => user_input } }
+    let(:message) { {"type" => "text", "text" => user_input} }
     let(:event) do
       {
         "type" => "message",
         "replyToken" => reply_token,
-        "source" => { "userId" => user_id },
+        "source" => {"userId" => user_id},
         "message" => message
       }
     end
@@ -44,12 +44,12 @@ RSpec.describe LineMessageParser, type: :service do
 
       context "with text message" do
         it "returns a hash of user id, user input and reply token" do
-          is_expected.to eq({ user_id: user_id, user_input: user_input, reply_token: reply_token })
+          is_expected.to eq({user_id: user_id, user_input: user_input, reply_token: reply_token})
         end
       end
 
       context "with non-text message" do
-        let(:message) { { "type" => "image", "id" => "image_id" } }
+        let(:message) { {"type" => "image", "id" => "image_id"} }
 
         it "raises an error" do
           expect { subject }.to raise_error("No valid user input found")

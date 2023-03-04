@@ -12,7 +12,7 @@ class OpenaiResponseGenerator
       }
     )
 
-    origin_ai_response, prefixed_ai_response = 
+    origin_ai_response, prefixed_ai_response =
       response["choices"][0]["text"].strip.split("ai_response:")
 
     prefixed_ai_response || origin_ai_response

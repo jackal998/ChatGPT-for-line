@@ -3,14 +3,14 @@ require "rails_helper"
 RSpec.describe "LineBotController", type: :request do
   describe "POST #callback" do
     let(:line_client) { instance_double(Line::Bot::Client) }
-    let(:parsed_line_message) { { user_id: "123", user_input: "Hi", reply_token: "456" } }
+    let(:parsed_line_message) { {user_id: "123", user_input: "Hi", reply_token: "456"} }
 
     before do
       allow(LineMessageParser).to receive_message_chain(:new, :parse).and_return(parsed_line_message)
       allow(OpenaiPromptGenerator).to receive_message_chain(:new, :execute).and_return("prompt")
       allow(OpenaiResponseGenerator).to receive_message_chain(:new, :execute).and_return("response")
       allow(LineMessageSender).to receive_message_chain(:new, :send)
-      post "/callback", params: { "key": "value" } # replace with the actual request parameters
+      post "/callback", params: {key: "value"} # replace with the actual request parameters
     end
 
     it "returns http success" do

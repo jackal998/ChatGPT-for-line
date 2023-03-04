@@ -1,7 +1,6 @@
 require "rails_helper"
 
 RSpec.describe OpenaiResponseGenerator, type: :service do
-
   describe "#execute" do
     subject { described_class.new(prompt).execute }
 
@@ -32,7 +31,7 @@ RSpec.describe OpenaiResponseGenerator, type: :service do
         expect(subject).to eq("Here is the AI response.")
       end
     end
-    
+
     context "when response does not include the ai_response prefix" do
       let(:api_response) do
         {

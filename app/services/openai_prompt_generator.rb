@@ -13,7 +13,7 @@ class OpenaiPromptGenerator
       .where("created_at >= ?", 30.minutes.ago)
       .pluck(:user_input, :ai_response)
       .map { |input, response| "user_input:#{input}\nai_response:#{response}" }
-  
+
     # 加入當前傳入的訊息
     conversations << "user_input:#{@user_input}"
 

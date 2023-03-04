@@ -13,7 +13,7 @@ class LineMessageParser
     events = @client.parse_events_from(body)
 
     events.each do |event|
-      if event.class == Line::Bot::Event::Message
+      if event.instance_of?(Line::Bot::Event::Message)
         case event.type
         when Line::Bot::Event::MessageType::Text
           user_id = event["source"]["userId"]
