@@ -125,6 +125,7 @@ GEM
     parallel (1.22.1)
     parser (3.2.1.0)
       ast (~> 2.4.1)
+    pg (1.4.6)
     pry (0.13.1)
       coderay (~> 1.1)
       method_source (~> 1.0)
@@ -209,7 +210,6 @@ GEM
       connection_pool (>= 2.2.5, < 3)
       rack (~> 2.0)
       redis (>= 4.5.0, < 5)
-    sqlite3 (1.6.1-x86_64-linux)
     standard (1.24.3)
       language_server-protocol (~> 3.17.0.2)
       rubocop (= 1.44.1)
@@ -232,6 +232,7 @@ DEPENDENCIES
   dotenv-rails
   factory_bot_rails
   line-bot-api
+  pg
   pry (~> 0.13.1)
   pry-nav
   puma (~> 5.0)
@@ -241,7 +242,6 @@ DEPENDENCIES
   rspec-sidekiq
   ruby-openai (~> 3.4.0)
   sidekiq (< 7)
-  sqlite3 (~> 1.4)
   standard
   tzinfo-data
 
