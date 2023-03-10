@@ -49,9 +49,6 @@ RUN adduser -h ${APP_ROOT} -D -s /bin/nologin ruby ruby && \
     chown -R ruby:ruby ${APP_ROOT}/tmp && \
     chmod -R +r ${APP_ROOT}
 
-USER ruby
 WORKDIR ${APP_ROOT}
 
-EXPOSE 3000
-ENTRYPOINT ["bin/rails"]
-CMD ["server", "-b", "0.0.0.0"]
+CMD ["rails", "server", "-b", "0.0.0.0"]
