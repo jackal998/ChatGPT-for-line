@@ -43,6 +43,10 @@ gem "bootsnap", require: false
 
 gem "dotenv-rails"
 
+group :development do
+  gem "boxing"
+end
+
 group :development, :test do
   gem "rspec-rails"
 
