@@ -35,10 +35,13 @@ COPY --from=base ${APP_ROOT}/tmp/cache ${APP_ROOT}/tmp/cache
 
 RUN mkdir -p ${APP_ROOT}
 
-# ENV RAILS_ENV=production
+ENV RAILS_ENV=production
 ENV RAILS_LOG_TO_STDOUT=true
 ENV RAILS_SERVE_STATIC_FILES=yes
 ENV APP_ROOT=$APP_ROOT
+
+ARG MASTER_KEY
+ENV RAILS_MASTER_KEY=${MASTER_KEY}
 
 COPY . ${APP_ROOT}
 
@@ -51,4 +54,5 @@ RUN adduser -h ${APP_ROOT} -D -s /bin/nologin ruby ruby && \
 
 WORKDIR ${APP_ROOT}
 
-CMD ["rails", "server", "-b", "0.0.0.0"]
+RUN chmod +x ${APP_ROOT}/entrypoint.sh
+ENTRYPOINT ${APP_ROOT}/entrypoint.sh
