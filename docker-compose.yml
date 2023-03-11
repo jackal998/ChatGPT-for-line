@@ -7,9 +7,9 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_DB
-      - POSTGRES_USER
-      - POSTGRES_PASSWORD
+      - DEVELOPMENT_DB_NAME
+      - DEVELOPMENT_DB_USERNAME
+      - DEVELOPMENT_DB_PASSWORD
 
   rails:
     build:
@@ -20,7 +20,8 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@postgres/$POSTGRES_DB
+      - DATABASE_URL=postgres://$DEVELOPMENT_DB_USERNAME:$DEVELOPMENT_DB_PASSWORD@postgres/$DEVELOPMENT_DB_NAME
+      - RAILS_ENV="${RAILS_ENV}"
       - RAILS_MASTER_KEY
     ports:
       - "3000:3000"

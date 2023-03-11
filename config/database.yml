@@ -5,6 +5,7 @@ default: &default
   username: chatgpt
   password: chatgpt
   host: localhost
+  timeout: 5000
 
 development:
   <<: *default
@@ -19,7 +20,7 @@ test:
 
 production:
   <<: *default
-  database: chatgpt_production
-  username: <%= ENV['DATABASE_USERNAME'] %>
-  password: <%= ENV['DATABASE_PASSWORD'] %>
-  host: <%= ENV['DATABASE_HOST'] %>
+  database: <%= ENV["PRODUCTION_DB_NAME"] %>
+  username: <%= ENV["PRODUCTION_DB_USERNAME"] %>
+  password: <%= Rails.application.credentials.gcp.try(:[], :production_db_password) %>
+  host: "<%= ENV.fetch("DB_SOCKET_DIR") { '/cloudsql' } %>/<%= ENV["CLOUD_SQL_CONNECTION_NAME"] %>"
