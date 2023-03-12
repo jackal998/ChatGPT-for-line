@@ -54,5 +54,5 @@ RUN adduser -h ${APP_ROOT} -D -s /bin/nologin ruby ruby && \
 
 WORKDIR ${APP_ROOT}
 
-RUN chmod +x ${APP_ROOT}/entrypoint.sh
-ENTRYPOINT ["${APP_ROOT}/entrypoint.sh"]
+RUN chmod +x entrypoint.sh
+ENTRYPOINT ["entrypoint.sh"]
