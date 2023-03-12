@@ -20,7 +20,7 @@ test:
 
 production:
   <<: *default
-  database: <%= ENV["PRODUCTION_DB_NAME"] %>
-  username: <%= ENV["PRODUCTION_DB_USERNAME"] %>
-  password: <%= Rails.application.credentials.gcp.try(:[], :production_db_password) %>
-  host: "<%= ENV.fetch("DB_SOCKET_DIR") { '/cloudsql' } %>/<%= ENV["CLOUD_SQL_CONNECTION_NAME"] %>"
+  database: <%= Rails.application.credentials.dig(:gcp, :db_name) %>
+  username: <%= Rails.application.credentials.dig(:gcp, :db_username) %>
+  password: <%= Rails.application.credentials.dig(:gcp, :db_password) %>
+  host: "/cloudsql/copper-strand-379700:asia-east1:quickstart-instance"
