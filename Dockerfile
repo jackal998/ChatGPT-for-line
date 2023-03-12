@@ -54,5 +54,5 @@ RUN adduser -h ${APP_ROOT} -D -s /bin/nologin ruby ruby && \
 
 WORKDIR ${APP_ROOT}
 
-EXPOSE 8080
-CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0", "-p", "8080"]
+RUN chmod +x ${APP_ROOT}/entrypoint.sh
+ENTRYPOINT ["${APP_ROOT}/entrypoint.sh"]
