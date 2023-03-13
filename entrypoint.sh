@@ -1,4 +1,5 @@
-#!/bin/bash
+#!/bin/sh
+cd /app
 RAILS_ENV=production bundle exec rake db:create
 RAILS_ENV=production bundle exec rake db:migrate
 
