@@ -1,0 +1,46 @@
+steps:
+  - id: "build image"
+    name: "gcr.io/cloud-builders/docker"
+    entrypoint: 'bash'
+    args: ["-c", "docker build --build-arg MASTER_KEY=$$RAILS_KEY -t $_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA . "]
+    secretEnv: ["RAILS_KEY"]
+
+  - id: "push image"
+    name: "gcr.io/cloud-builders/docker"
+    args: ["push", "$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA"]
+
+  - id: "deploy image"
+    name: 'gcr.io/google.com/cloudsdktool/cloud-sdk:slim'
+    args:
+      - run
+      - services
+      - update
+      - $_SERVICE_NAME
+      - '--platform=managed'
+      - '--image=$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
+      - >-
+        --labels=managed-by=gcp-cloud-build-deploy-cloud-run,commit-sha=$COMMIT_SHA,gcb-build-id=$BUILD_ID,gcb-trigger-id=$_TRIGGER_ID
+      - '--region=$_DEPLOY_REGION'
+      - '--quiet'
+    id: Deploy
+    entrypoint: gcloud
+
+options:
+  substitutionOption: ALLOW_LOOSE
+
+substitutions:
+  _SERVICE_NAME: chatgpt-for-line-test
+  REPO_NAME: chatgpt-for-line
+  _DEPLOY_REGION: asia-east1
+  _GCR_HOSTNAME: asia.gcr.io
+  _TRIGGER_ID: 8fcf40a4-6e1f-41ad-9380-1fda28a7ab24
+  _PLATFORM: managed
+  _SECRET_NAME: rails-master-key
+
+availableSecrets:
+  secretManager:
+  - versionName: projects/${PROJECT_ID}/secrets/${_SECRET_NAME}/versions/latest
+    env: RAILS_KEY
+
+images:
+  - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'

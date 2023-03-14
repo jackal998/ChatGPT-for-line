@@ -1,3 +1,3 @@
 OpenAI.configure do |config|
-  config.access_token = ENV["OPENAI_ACCESS_TOKEN"]
+  config.access_token = Rails.env.test? ? "" : Rails.application.credentials.openai[:access_token]
 end

@@ -5,6 +5,7 @@ default: &default
   username: chatgpt
   password: chatgpt
   host: localhost
+  timeout: 5000
 
 development:
   <<: *default
@@ -19,7 +20,7 @@ test:
 
 production:
   <<: *default
-  database: chatgpt_production
-  username: <%= ENV['DATABASE_USERNAME'] %>
-  password: <%= ENV['DATABASE_PASSWORD'] %>
-  host: <%= ENV['DATABASE_HOST'] %>
+  database: <%= Rails.application.credentials.dig(:gcp, :db_name) %>
+  username: <%= Rails.application.credentials.dig(:gcp, :db_username) %>
+  password: <%= Rails.application.credentials.dig(:gcp, :db_password) %>
+  host: "/cloudsql/copper-strand-379700:asia-east1:quickstart-instance"
