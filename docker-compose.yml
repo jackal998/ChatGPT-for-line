@@ -20,11 +20,11 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@postgres/$POSTGRES_DB
       - RAILS_MASTER_KEY
     ports:
       - "3000:3000"
-    command: sh -c "bundle exec rails db:create db:migrate && bundle exec rails s -p 3000 -b '0.0.0.0'"
+    command:
+      sh -c "bundle exec rails db:create && bundle exec rails db:migrate && rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
 
 volumes:
   postgres_data:
