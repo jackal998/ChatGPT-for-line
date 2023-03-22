@@ -1,3 +1,4 @@
+```yml
 version: '3.8'
 
 services:
@@ -45,10 +46,11 @@ services:
       - REDIS_URL
       - RAILS_MASTER_KEY
     ports:
-      - 443:3000
+      - 3000:3000
     command:
-      sh -c "bundle exec rails db:create && bundle exec rails db:migrate && rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b 'ssl://0.0.0.0:3000?key=localhost.key&cert=localhost.crt'"
+      sh -c "bundle exec rails db:create && bundle exec rails db:migrate && rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b '0.0.0.0'"
 
 volumes:
   redis_data:
   postgres_data:
+```

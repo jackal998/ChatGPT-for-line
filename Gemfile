@@ -48,8 +48,6 @@ group :development do
 end
 
 group :development, :test do
-  gem "rspec-rails"
-
   gem "factory_bot_rails"
 
   gem "pry", "~> 0.13.1"
@@ -59,5 +57,6 @@ group :development, :test do
 end
 
 group :test do
+  gem "rspec-rails"
   gem "rspec-sidekiq"
 end

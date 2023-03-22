@@ -2,18 +2,17 @@ steps:
   - id: "build image"
     name: "gcr.io/cloud-builders/docker"
     entrypoint: 'bash'
-    args: ["-c", "docker build --build-arg MASTER_KEY=$$RAILS_MASTER_KEY -t $_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA . "]
+    args: ["-c", "docker build --build-arg MASTER_KEY=$$RAILS_MASTER_KEY -t $_GCR_HOSTNAME/$PROJECT_ID/rails:latest . "]
     secretEnv: ["RAILS_MASTER_KEY"]
 
   - id: "push image"
     name: "gcr.io/cloud-builders/docker"
-    args: ["push", "$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA"]
+    args: ["push", "$_GCR_HOSTNAME/$PROJECT_ID/rails:latest"]
 
 options:
   substitutionOption: ALLOW_LOOSE
 
 substitutions:
-  REPO_NAME: chatgpt-in-line
   _GCR_HOSTNAME: us.gcr.io
   _SECRET_NAME: rails-master-key
 
@@ -23,4 +22,4 @@ availableSecrets:
     env: RAILS_MASTER_KEY
 
 images:
-  - '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME:$COMMIT_SHA'
+  - '$_GCR_HOSTNAME/$PROJECT_ID/rails:latest'
