@@ -3,7 +3,7 @@ default: &default
   encoding: unicode
   host: <%= ENV.fetch("POSTGRES_DB") %>
   username: <%= ENV.fetch("POSTGRES_USER") %>
-  password: <%= ENV.fetch("POSTGRES_PASSWORD") %>
+  password: <%= Rails.application.credentials.postgres_password %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
 
 development:

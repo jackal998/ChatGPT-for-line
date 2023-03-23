@@ -27,6 +27,8 @@ services:
       - postgres
     env_file:
       - .env
+    volumes:
+      - ./config/master.key:/app/config/master.key
     environment:
       - REDIS_URL
 
@@ -43,11 +45,14 @@ services:
       - .env
     environment:
       - REDIS_URL
-      - RAILS_MASTER_KEY
     ports:
       - 443:3000
+    volumes:
+      - ./config/master.key:/app/config/master.key
+      - ./localhost.crt:/etc/ssl/certs/localhost.crt
+      - ./localhost.key:/etc/ssl/private/localhost.key
     command:
-      sh -c "bundle exec rails db:create && bundle exec rails db:migrate && rm -f tmp/pids/server.pid && bundle exec rails s -p 3000 -b 'ssl://0.0.0.0:3000?key=localhost.key&cert=localhost.crt'"
+      sh -c "bundle exec rails db:create RAILS_ENV=${RAILS_ENVIRONMENT} && bundle exec rails db:migrate RAILS_ENV=${RAILS_ENVIRONMENT} && rm -f tmp/pids/server.pid && bundle exec rails s -e ${RAILS_ENVIRONMENT} -p 3000 -b 'ssl://0.0.0.0:3000?key=/etc/ssl/private/localhost.key&cert=/etc/ssl/certs/localhost.crt'"
 
 volumes:
   redis_data:
