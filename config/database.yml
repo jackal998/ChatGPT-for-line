@@ -1,11 +1,10 @@
 default: &default
   adapter: postgresql
   encoding: unicode
+  host: <%= ENV.fetch("POSTGRES_DB") %>
+  username: <%= ENV.fetch("POSTGRES_USER") %>
+  password: <%= Rails.application.credentials.postgres_password %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
-  username: chatgpt
-  password: chatgpt
-  host: localhost
-  timeout: 5000
 
 development:
   <<: *default
@@ -20,7 +19,4 @@ test:
 
 production:
   <<: *default
-  database: <%= Rails.application.credentials.dig(:gcp, :db_name) %>
-  username: <%= Rails.application.credentials.dig(:gcp, :db_username) %>
-  password: <%= Rails.application.credentials.dig(:gcp, :db_password) %>
-  host: "/cloudsql/copper-strand-379700:asia-east1:quickstart-instance"
+  database: chatgpt_production

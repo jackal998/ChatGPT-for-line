@@ -2,29 +2,58 @@ version: '3.8'
 
 services:
   postgres:
-    image: postgres:13.1
+    image: postgres:13.1-alpine
     restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - .env
     environment:
       - POSTGRES_DB
       - POSTGRES_USER
       - POSTGRES_PASSWORD
 
-  rails:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  redis:
+    image: redis:5-alpine
+    command: redis-server
+    volumes:
+      - redis_data:/var/lib/redis/data
+
+  sidekiq:
+    image: us.gcr.io/chatgpt-in-line/rails
+    command: bundle exec sidekiq
     depends_on:
+      - redis
+      - postgres
+    env_file:
+      - .env
+    volumes:
+      - ./config/master.key:/app/config/master.key
+    environment:
+      - REDIS_URL
+
+  rails:
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    image: us.gcr.io/chatgpt-in-line/rails
+    depends_on:
+      - redis
+      - sidekiq
       - postgres
     env_file:
       - .env
     environment:
-      - DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@postgres/$POSTGRES_DB
-      - RAILS_MASTER_KEY
+      - REDIS_URL
     ports:
-      - "3000:3000"
-    command: sh -c "bundle exec rails db:create db:migrate && bundle exec rails s -p 3000 -b '0.0.0.0'"
+      - 443:3000
+    volumes:
+      - ./config/master.key:/app/config/master.key
+      - ./localhost.crt:/etc/ssl/certs/localhost.crt
+      - ./localhost.key:/etc/ssl/private/localhost.key
+    command:
+      sh -c "bundle exec rails db:create RAILS_ENV=${RAILS_ENVIRONMENT} && bundle exec rails db:migrate RAILS_ENV=${RAILS_ENVIRONMENT} && rm -f tmp/pids/server.pid && bundle exec rails s -e ${RAILS_ENVIRONMENT} -p 3000 -b 'ssl://0.0.0.0:3000?key=/etc/ssl/private/localhost.key&cert=/etc/ssl/certs/localhost.crt'"
 
 volumes:
+  redis_data:
   postgres_data:
