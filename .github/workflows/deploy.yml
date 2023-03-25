@@ -1,0 +1,69 @@
+# Copyright 2020 Google, LLC.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#    http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+name: Deploy to Google Compute Engine
+
+on:
+  push:
+    branches:
+    - 'production'
+
+env:
+  PROJECT_ID: ${{ vars.PROJECT_ID }}
+  GCE_INSTANCE: ${{ vars.GCE_INSTANCE }}
+  GCE_INSTANCE_ZONE: ${{ vars.GCE_INSTANCE_ZONE }}
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    # Alternative option - authentication via credentials json
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v1'
+      with:
+        credentials_json: '${{ secrets.GCP_CREDENTIALS }}'
+
+    - name: Set up Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+
+    - name: Set up Docker image
+      run: |
+        gcloud --quiet auth configure-docker
+        docker build --tag "us.gcr.io/$PROJECT_ID/rails:latest" .
+        docker push "us.gcr.io/$PROJECT_ID/rails:latest"
+
+    - name: Prepare SSH key
+      run: |
+        mkdir -p ~/.ssh/
+        echo "${{secrets.GCP_SSH_PRIVATE_KEY}}" > ~/.ssh/google_compute_engine
+        echo "${{secrets.GCP_SSH_PUB_KEY}}" > ~/.ssh/google_compute_engine.pub
+        sudo chmod 600 ~/.ssh/google_compute_engine
+        sudo chmod 600 ~/.ssh/google_compute_engine.pub
+
+    # Update containers by docker-compose.yml
+    - name: Deploy containers by docker-compose.yml in GCE VM instance
+      run: |
+        gcloud compute scp --zone=$GCE_INSTANCE_ZONE ./deployment/deploy.sh $GCE_INSTANCE:~/
+        gcloud compute scp --zone=$GCE_INSTANCE_ZONE ./docker-compose.yml $GCE_INSTANCE:~/
+        gcloud compute ssh $GCE_INSTANCE --zone=$GCE_INSTANCE_ZONE --command="bash deploy.sh"
