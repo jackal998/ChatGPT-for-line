@@ -62,8 +62,20 @@ jobs:
         sudo chmod 600 ~/.ssh/google_compute_engine.pub
 
     # Update containers by docker-compose.yml
-    - name: Deploy containers by docker-compose.yml in GCE VM instance
+    - name: Deploy
       run: |
         gcloud compute scp --zone=$GCE_INSTANCE_ZONE ./deployment/deploy.sh $GCE_INSTANCE:~/
         gcloud compute scp --zone=$GCE_INSTANCE_ZONE ./docker-compose.yml $GCE_INSTANCE:~/
-        gcloud compute ssh $GCE_INSTANCE --zone=$GCE_INSTANCE_ZONE --command="bash deploy.sh"
+        gcloud compute ssh $GCE_INSTANCE --zone=$GCE_INSTANCE_ZONE --command="bash -s" <<EOF
+          shopt -s expand_aliases
+          source ~/.bash_aliases
+
+          echo "Pulling Images..."
+          docker-compose pull
+
+          echo "Updating Containers..."
+          docker-compose up --detach
+
+          echo "Removing Old Images..."
+          docker image prune -f
+        EOF
