@@ -21,6 +21,7 @@ on:
 
 env:
   PROJECT_ID: ${{ vars.PROJECT_ID }}
+  GCE_USER: ${{ vars.GCE_USER }}
   GCE_INSTANCE: ${{ vars.GCE_INSTANCE }}
   GCE_INSTANCE_ZONE: ${{ vars.GCE_INSTANCE_ZONE }}
 
@@ -64,9 +65,8 @@ jobs:
     # Update containers by docker-compose.yml
     - name: Deploy
       run: |
-        gcloud compute scp --zone=$GCE_INSTANCE_ZONE ./deployment/deploy.sh $GCE_INSTANCE:~/
-        gcloud compute scp --zone=$GCE_INSTANCE_ZONE ./docker-compose.yml $GCE_INSTANCE:~/
-        gcloud compute ssh $GCE_INSTANCE --zone=$GCE_INSTANCE_ZONE --command="bash -s" <<EOF
+        gcloud compute scp --zone=$GCE_INSTANCE_ZONE ./docker-compose.yml $GCE_USER@$GCE_INSTANCE:~/
+        gcloud compute ssh $GCE_USER@$GCE_INSTANCE --zone=$GCE_INSTANCE_ZONE --command="bash -s" <<EOF
           shopt -s expand_aliases
           source ~/.bash_aliases
 
