@@ -23,7 +23,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: bundle exec sidekiq
+    command: bundle exec sidekiq --environment ${RAILS_ENVIRONMENT}
     depends_on:
       - redis
       - postgres
@@ -51,7 +51,13 @@ services:
     volumes:
       - ./config/master.key:/app/config/master.key
     command:
-      sh -c "bundle exec rails db:create RAILS_ENV=${RAILS_ENVIRONMENT} && bundle exec rails db:migrate RAILS_ENV=${RAILS_ENVIRONMENT} && rm -f tmp/pids/server.pid && bundle exec rails s -e ${RAILS_ENVIRONMENT} -p 3000 -b 0.0.0.0"
+      - /bin/sh
+      - -c
+      - |
+        bundle exec rails db:create RAILS_ENV=${RAILS_ENVIRONMENT}
+        bundle exec rails db:migrate RAILS_ENV=${RAILS_ENVIRONMENT}
+        rm -f tmp/pids/server.pid
+        bundle exec rails s -e ${RAILS_ENVIRONMENT} -p 3000 -b 0.0.0.0
 
 volumes:
   redis_data:

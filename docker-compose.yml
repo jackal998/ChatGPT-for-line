@@ -21,7 +21,7 @@ services:
 
   sidekiq:
     image: us.gcr.io/chatgpt-in-line/rails
-    command: bundle exec sidekiq
+    command: bundle exec sidekiq --environment ${RAILS_ENVIRONMENT}
     depends_on:
       - redis
       - postgres
@@ -49,7 +49,13 @@ services:
       - ./localhost.crt:/etc/ssl/certs/localhost.crt
       - ./localhost.key:/etc/ssl/private/localhost.key
     command:
-      sh -c "bundle exec rails db:create RAILS_ENV=${RAILS_ENVIRONMENT} && bundle exec rails db:migrate RAILS_ENV=${RAILS_ENVIRONMENT} && rm -f tmp/pids/server.pid && bundle exec rails s -e ${RAILS_ENVIRONMENT} -p 3000 -b 'ssl://0.0.0.0:3000?key=/etc/ssl/private/localhost.key&cert=/etc/ssl/certs/localhost.crt'"
+      - /bin/sh
+      - -c
+      - |
+        bundle exec rails db:create RAILS_ENV=${RAILS_ENVIRONMENT}
+        bundle exec rails db:migrate RAILS_ENV=${RAILS_ENVIRONMENT}
+        rm -f tmp/pids/server.pid
+        bundle exec rails s -e ${RAILS_ENVIRONMENT} -p 3000 -b 'ssl://0.0.0.0:3000?key=/etc/ssl/private/localhost.key&cert=/etc/ssl/certs/localhost.crt'
 
 volumes:
   redis_data:
