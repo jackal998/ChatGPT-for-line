@@ -1,20 +1,16 @@
 class OpenaiResponseGenerator
-  def initialize(prompt)
-    @prompt = prompt
+  def initialize(messages)
+    @messages = messages
   end
 
   def execute
-    response = OpenAI::Client.new.completions(
+    response = OpenAI::Client.new.chat(
       parameters: {
-        model: "text-davinci-003",
-        prompt: @prompt,
-        max_tokens: 500
+        model: "gpt-3.5-turbo",
+        messages: @messages
       }
     )
 
-    origin_ai_response, prefixed_ai_response =
-      response["choices"][0]["text"].strip.split("ai_response:")
-
-    prefixed_ai_response || origin_ai_response
+    response.dig("choices", 0, "message", "content")
   end
 end
