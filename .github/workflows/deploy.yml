@@ -74,7 +74,7 @@ jobs:
           docker-compose pull
 
           echo "Updating Containers..."
-          docker-compose up --detach
+          docker-compose up -d
 
           echo "Removing Old Images..."
           docker image prune -f
