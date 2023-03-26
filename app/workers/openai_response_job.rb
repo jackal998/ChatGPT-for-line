@@ -6,6 +6,9 @@ class OpenaiResponseJob
 
     LineMessage::Sender.new(line_user_info["reply_token"]).send(message_text)
 
-    Message.create(ai_response: message_text, **line_user_info.slice("user_id", "user_input"))
+    Message.insert_all([
+      {role: "user", content: line_user_info["user_input"], user_id: line_user_info["user_id"]},
+      {role: "assistant", content: message_text, user_id: line_user_info["user_id"]}
+    ])
   end
 end

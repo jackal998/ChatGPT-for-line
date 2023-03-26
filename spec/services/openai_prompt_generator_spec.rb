@@ -7,39 +7,20 @@ RSpec.describe OpenaiPromptGenerator, type: :service do
 
     subject { OpenaiPromptGenerator.new(user_id, user_input).execute }
 
-    shared_examples "current user input under a fixed lenth limit" do
-      it "returns a string with current user input under a fixed lenth limit" do
-        expect(subject.length).to be <= described_class::MAX_TOKENS
-        is_expected.to include("user_input:#{user_input}")
-      end
+    let!(:older_message) do
+      Message.create!(user_id: user_id, role: "assistant", content: "Hi there!", created_at: 4.days.ago)
+    end
+    let!(:recent_message) do
+      Message.create!(user_id: user_id, role: "assistant", content: "How can I help you?", created_at: 2.days.ago)
     end
 
-    context "with recent conversations" do
-      def create_messages(message_age:, user_id: nil)
-        create_list(:message, rand(10), user_id: user_id, user_input: "#{message_age}.minutes.ago", created_at: message_age.minutes.ago)
-      end
+    it "returns expected array including recent messages" do
+      expected_messages = [
+        {"role" => "assistant", "content" => recent_message.content},
+        {"role" => "user", "content" => user_input}
+      ]
 
-      let!(:user_messages_31_minutes_ago) { create_messages(user_id: user_id, message_age: 31) }
-      let!(:user_messages_29_minutes_ago) { create_messages(user_id: user_id, message_age: 29) }
-      let!(:other_messages_28_minutes_ago) { create_messages(message_age: 28) }
-
-      it "returns a string including recent conversations" do
-        recent_conversations = user_messages_29_minutes_ago.map do |message|
-          "user_input:#{message.user_input} ai_response:#{message.ai_response}"
-        end.join(" ")
-
-        is_expected.to include(recent_conversations)
-      end
-
-      include_examples "current user input under a fixed lenth limit"
-    end
-
-    context "without recent conversations" do
-      it "returns a string without recent conversations" do
-        is_expected.not_to include("ai_response:")
-      end
-
-      include_examples "current user input under a fixed lenth limit"
+      expect(subject).to match_array(expected_messages)
     end
   end
 end
