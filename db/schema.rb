@@ -10,16 +10,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_03_26_081122) do
+ActiveRecord::Schema[7.0].define(version: 2023_03_27_151358) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "messages", force: :cascade do |t|
     t.string "role"
-    t.string "content"
+    t.string "content", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "user_id"
+    t.integer "content_tokens"
     t.index ["user_id", "created_at"], name: "index_messages_on_user_id_and_created_at"
   end
 
