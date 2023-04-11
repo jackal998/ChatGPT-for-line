@@ -6,7 +6,7 @@ class OpenaiResponseGenerator
   def execute
     response = OpenAI::Client.new.chat(
       parameters: {
-        model: "gpt-3.5-turbo",
+        model: "gpt-4",
         messages: @messages
       }
     )

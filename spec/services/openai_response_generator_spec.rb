@@ -12,7 +12,7 @@ RSpec.describe OpenaiResponseGenerator, type: :service do
       before do
         expect_any_instance_of(OpenAI::Client).to receive(:chat).with(
           parameters: {
-            model: "gpt-3.5-turbo",
+            model: "gpt-4",
             messages: messages
           }
         ).and_return(api_response)
