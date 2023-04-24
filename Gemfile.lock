@@ -75,7 +75,7 @@ GEM
     builder (3.2.4)
     coderay (1.1.3)
     concurrent-ruby (1.2.2)
-    connection_pool (2.3.0)
+    connection_pool (2.4.0)
     crass (1.0.6)
     date (3.3.3)
     diff-lcs (1.5.0)
@@ -137,7 +137,7 @@ GEM
     puma (5.6.5)
       nio4r (~> 2.0)
     racc (1.6.2)
-    rack (2.2.6.3)
+    rack (2.2.6.4)
     rack-test (2.0.2)
       rack (>= 1.3)
     rails (7.0.4.2)
@@ -169,6 +169,8 @@ GEM
     rainbow (3.1.1)
     rake (13.0.6)
     redis (4.8.1)
+    redis-client (0.14.1)
+      connection_pool
     regexp_parser (2.7.0)
     rexml (3.2.5)
     rspec-core (3.12.1)
@@ -209,10 +211,11 @@ GEM
     ruby-openai (3.4.0)
       httparty (>= 0.18.1)
     ruby-progressbar (1.13.0)
-    sidekiq (6.5.8)
-      connection_pool (>= 2.2.5, < 3)
-      rack (~> 2.0)
-      redis (>= 4.5.0, < 5)
+    sidekiq (7.0.8)
+      concurrent-ruby (< 2)
+      connection_pool (>= 2.3.0)
+      rack (>= 2.2.4)
+      redis-client (>= 0.11.0)
     standard (1.24.3)
       language_server-protocol (~> 3.17.0.2)
       rubocop (= 1.44.1)
@@ -245,7 +248,7 @@ DEPENDENCIES
   rspec-rails
   rspec-sidekiq
   ruby-openai (~> 3.4.0)
-  sidekiq (< 7)
+  sidekiq (< 8)
   standard
   tzinfo-data
 
